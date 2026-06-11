@@ -1,0 +1,131 @@
+.categories-wrapper {
+  min-height: 100vh;
+  background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 450px));
+  justify-content: center;
+  gap: 25px;
+  margin-top: 40px;
+  
+}
+
+.category-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  animation: fadeIn 0.4s ease;
+   min-height: 10vh;
+}
+.category-card{
+    margin-top: 50px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  
+}
+
+.cat-icon { font-size: 28px; }
+
+.cat-header h3 {
+  flex: 1;
+  color: white;
+  font-size: 18px;
+}
+
+.cat-count {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.cat-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.cat-progress span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.cat-tasks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cat-tasks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cat-tasks li.done {
+  text-decoration: line-through;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.no-tasks {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.more {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+  .category-grid { grid-template-columns: 1fr; }
+}
