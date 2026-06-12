@@ -11,9 +11,9 @@
     #963b07de,
     #b79714
   );
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Date */
@@ -57,15 +57,21 @@
   color: #374151;
   font-weight: 600;
 }
-/* Greeting Animation */
 .home-wrapper {
   min-height: 100vh;
-  background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600');
+  position: relative;
+}
+
+.home-wrapper::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+    url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  position: fixed;
-  inset: 0;
   z-index: -1;
 }
 

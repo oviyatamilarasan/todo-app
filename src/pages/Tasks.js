@@ -93,7 +93,7 @@ function Tasks() {
     <div className="tasks-page">
       <div className="tasks-container">
 
-        {/* ✅ HEADER ROW */}
+        {/* HEADER ROW */}
         <div className="tasks-header">
           <h2 className="page-title">📋 Tasks</h2>
           <button
@@ -112,7 +112,7 @@ function Tasks() {
           </button>
         </div>
 
-        {/* ✅ FORM */}
+        {/* FORM */}
         {showForm && (
           <div className="task-form">
             <input
@@ -151,7 +151,7 @@ function Tasks() {
           </div>
         )}
 
-        {/* ✅ SEARCH & FILTER */}
+        {/* SEARCH & FILTER */}
         <div className="search-filter-row">
           <input
             className="search-input"
@@ -170,7 +170,7 @@ function Tasks() {
           </div>
         </div>
 
-        {/* ✅ TASK LIST */}
+        {/* TASK LIST */}
         <ul className="task-list">
           {filtered.length === 0 && (
             <div className="empty">

@@ -1,14 +1,28 @@
-.dashboard-wrapper {
+.dashboard-page {
   min-height: 100vh;
-  background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600');
-  background-position: center;
-  background-attachment: fixed;
+  position: relative;
+}
+
+.dashboard-page::before {
+  content: '';
   position: fixed;
   inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   z-index: -1;
 }
 
-.dashboard { padding: 20px 0; }
+.dashboard-container {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 90px 20px 60px;
+}
 
 .page-title {
   font-size: 26px;
@@ -59,12 +73,16 @@
   gap: 16px;
 }
 
+.charts-grid .calendar-card {
+  grid-column: span 2;
+}
+
 .chart-card {
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 16px;
-  padding: 4px;
+  padding: 16px;
 }
 
 .chart-card h3 {
@@ -76,4 +94,5 @@
 @media (max-width: 768px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .charts-grid { grid-template-columns: 1fr; }
+  .charts-grid .calendar-card { grid-column: span 1; }
 }

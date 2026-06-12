@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from 'recharts';
+import Profile from '../components/Profile';
+import Calendar from '../components/Calendar';
 import './Dashboard.css';
 
 const COLORS = ['#10b981', '#f59e0b'];
@@ -29,10 +31,14 @@ function Dashboard() {
   ];
 
   return (
-    <div className="dashboard-wrapper">
-      <div className="dashboard">
+    <div className="dashboard-page">
+      <div className="dashboard-container">
         <h2 className="page-title">📊 Dashboard</h2>
 
+        {/* Profile section */}
+        <Profile />
+
+        {/* Stats */}
         <div className="stat-grid">
           <div className="stat-card">
             <span className="stat-icon">📋</span>
@@ -56,12 +62,15 @@ function Dashboard() {
           </div>
         </div>
 
+        {/* Calendar first, then Charts */}
         <div className="charts-grid">
+          <Calendar />
+
           <div className="chart-card">
             <h3>Task Status</h3>
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={200}>
               <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label>
+                <Pie data={pieData} cx="50%" cy="50%" outerRadius={70} dataKey="value" label>
                   {pieData.map((_, index) => (
                     <Cell key={index} fill={COLORS[index]} />
                   ))}
@@ -73,7 +82,7 @@ function Dashboard() {
 
           <div className="chart-card">
             <h3>Priority Breakdown</h3>
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={200}>
               <BarChart data={barData}>
                 <XAxis dataKey="name" stroke="rgba(255,255,255,0.6)" />
                 <YAxis stroke="rgba(255,255,255,0.6)" />
@@ -83,6 +92,7 @@ function Dashboard() {
             </ResponsiveContainer>
           </div>
         </div>
+
       </div>
     </div>
   );
