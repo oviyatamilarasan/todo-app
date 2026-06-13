@@ -1,15 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useApp } from '../context/AppContext';
 import './Calendar.css';
 
 function Calendar() {
-  const [tasks, setTasks] = useState([]);
+  const { tasks } = useApp();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('tasks');
-    if (saved) setTasks(JSON.parse(saved));
-  }, []);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();

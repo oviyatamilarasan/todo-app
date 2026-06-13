@@ -1,6 +1,11 @@
+/* =====================================================
+   PAGE BACKGROUND
+   (single fixed pseudo-element behind everything so the
+   real content can flow normally and the page can scroll)
+===================================================== */
 .categories-wrapper {
-  min-height: 100vh;
   position: relative;
+  min-height: 100vh;
 }
 
 .categories-wrapper::before {
@@ -8,31 +13,62 @@
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-    url('https://images.unsplash.com/photo-1557683316-973673baf926?w=1600');
+    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+    url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  z-index: -1;
-}
-.categories-wrapper {
-  min-height: 100vh;
-  background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  position: fixed;
-  inset: 0;
   z-index: -1;
 }
 
+.categories {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 40px;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+.categories-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: rgba(10, 10, 35, 0.6);
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
+}
+
+.add-category-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+}
+
+.add-category-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.65);
+}
+
+/* =====================================================
+   CATEGORY GRID & CARDS
+===================================================== */
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 450px));
-  justify-content: center;
-  gap: 25px;
-  margin-top: 40px;
-  
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 22px;
+  margin-top: 30px;
 }
 
 .category-card {
@@ -40,12 +76,18 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 16px;
-  padding: 24px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   animation: fadeIn 0.4s ease;
-   min-height: 10vh;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
-.category-card{
-    margin-top: 50px;
+
+.category-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
 }
 
 @keyframes fadeIn {
@@ -57,8 +99,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
-  
 }
 
 .cat-icon { font-size: 28px; }
@@ -67,6 +107,7 @@
   flex: 1;
   color: white;
   font-size: 18px;
+  margin: 0;
 }
 
 .cat-count {
@@ -75,18 +116,21 @@
   background: rgba(255, 255, 255, 0.1);
   padding: 4px 10px;
   border-radius: 20px;
+  white-space: nowrap;
 }
 
+/* =====================================================
+   PROGRESS
+===================================================== */
 .cat-progress {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
 }
 
 .progress-bar {
   flex: 1;
-  height: 64px;
+  height: 10px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   overflow: hidden;
@@ -104,11 +148,48 @@
   white-space: nowrap;
 }
 
+/* =====================================================
+   STATS ROW (Total / Completed / Pending)
+===================================================== */
+.cat-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 10px 6px;
+}
+
+.cat-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.cat-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+.cat-stat-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* =====================================================
+   TASK PREVIEW LIST
+===================================================== */
 .cat-tasks {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin: 0;
+  padding: 0;
 }
 
 .cat-tasks li {
@@ -135,14 +216,305 @@
   color: rgba(255, 255, 255, 0.4);
   font-size: 13px;
   font-style: italic;
+  margin: 0;
 }
 
 .more {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
-  margin-top: 4px;
+  margin: 0;
 }
 
+/* =====================================================
+   CARD ACTIONS (Edit / Delete)
+===================================================== */
+.cat-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.cat-edit-btn,
+.cat-del-btn {
+  flex: 1;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cat-edit-btn {
+  background: rgba(102, 126, 234, 0.25);
+  color: #c7d2fe;
+  border: 1px solid rgba(102, 126, 234, 0.4);
+}
+
+.cat-edit-btn:hover {
+  background: rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+}
+
+.cat-del-btn {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.cat-del-btn:hover {
+  background: rgba(239, 68, 68, 0.32);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   MODAL FORM ELEMENTS (Add / Edit / Delete category)
+===================================================== */
+.field-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: -6px;
+}
+
+.modal-input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+  transition: border 0.2s ease;
+}
+
+.modal-input:focus {
+  border-color: #667eea;
+}
+
+.modal-input option {
+  background: #1a1a3e;
+  color: white;
+}
+
+.modal-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.modal-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fecaca;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 0;
+}
+
+/* Icon picker */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+}
+
+.icon-option {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  font-size: 18px;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.icon-option:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.icon-option.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.3);
+  transform: scale(1.08);
+}
+
+/* Color picker */
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.color-option {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: white;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  border-color: white;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.color-option.custom-color {
+  background: repeating-conic-gradient(#999 0% 25%, #ccc 0% 50%) 50% / 10px 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.color-option.custom-color input[type='color'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+}
+
+/* Live category preview inside Add/Edit modal */
+.category-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: white;
+  font-weight: 600;
+}
+
+/* Modal action buttons */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.modal-btn {
+  flex: 1;
+  border: none;
+  padding: 11px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-btn.primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.modal-btn.primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.modal-btn.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.modal-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.modal-btn.danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: white;
+}
+
+.modal-btn.danger:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+/* Delete modal: move-to-category radio options */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.radio-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.radio-option.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.18);
+}
+
+.radio-option input[type='radio'] {
+  margin-top: 3px;
+  accent-color: #667eea;
+}
+
+.radio-option strong {
+  display: block;
+  font-size: 14px;
+}
+
+.radio-option p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.move-select {
+  margin-left: 28px;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
 @media (max-width: 600px) {
-  .category-grid { grid-template-columns: 1fr; }
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .icon-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .categories-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
 }

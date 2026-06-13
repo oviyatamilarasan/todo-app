@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from 'recharts';
+import { useApp } from '../context/AppContext';
 import Profile from '../components/Profile';
 import Calendar from '../components/Calendar';
 import './Dashboard.css';
@@ -7,12 +7,7 @@ import './Dashboard.css';
 const COLORS = ['#10b981', '#f59e0b'];
 
 function Dashboard() {
-  const [tasks, setTasks] = useState([]);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('tasks');
-    if (saved) setTasks(JSON.parse(saved));
-  }, []);
+  const { tasks } = useApp();
 
   const total = tasks.length;
   const completed = tasks.filter(t => t.done).length;

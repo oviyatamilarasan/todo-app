@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AppProvider } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
@@ -9,20 +10,22 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="app-wrapper">
-        <Navbar />
-        <div className="page-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
+    <AppProvider>
+      <Router>
+        <div className="app-wrapper">
+          <Navbar />
+          <div className="page-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/categories" element={<Categories />} />
+              <Route path="/about" element={<About />} />
+            </Routes>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </AppProvider>
   );
 }
 

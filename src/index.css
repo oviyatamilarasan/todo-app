@@ -8,6 +8,11 @@ html, body, #root {
   width: 100%;
 }
 
+html {
+  /* Smooth scrolling for the whole app (anchor links, programmatic scroll, etc.) */
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -16,4 +21,47 @@ body {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* =====================================================
+   GLOBAL CUSTOM SCROLLBAR
+   Modern, thin, dark-theme friendly scrollbar applied
+   to every scrollable element across the whole app
+   (Dashboard, Home, Tasks, Categories, About, etc.)
+   - Only appears when content overflows the viewport
+   - 8px width, rounded corners, smooth hover effect
+===================================================== */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) rgba(15, 15, 30, 0.55);
+}
+
+/* WebKit browsers (Chrome, Edge, Safari, Opera) */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(15, 15, 30, 0.55);
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color 0.25s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }

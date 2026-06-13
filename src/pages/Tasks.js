@@ -1,55 +1,57 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useApp } from '../context/AppContext';
 import './Tasks.css';
 
 function Tasks() {
-  const [tasks, setTasks] = useState(() => {
-    const saved = localStorage.getItem('tasks');
-    return saved ? JSON.parse(saved) : [];
-  });
+  // Centralized task & category state coming from Context API
+  const {
+    tasks,
+    addTask,
+    updateTask,
+    deleteTask,
+    toggleTask,
+    categories,
+    defaultCategory,
+  } = useApp();
+
   const [input, setInput] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('Medium');
-  const [category, setCategory] = useState('Personal');
+  const [category, setCategory] = useState(defaultCategory);
   const [dueDate, setDueDate] = useState('');
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
   const [showForm, setShowForm] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
+  const clearForm = () => {
+    setInput('');
+    setDescription('');
+    setPriority('Medium');
+    setCategory(defaultCategory);
+    setDueDate('');
+  };
 
-  const addTask = () => {
+  const handleSave = () => {
     if (input.trim() === '') return;
-    const newTask = {
+
+    const taskData = {
       text: input,
       description,
       priority,
       category,
       dueDate,
-      done: false,
-      createdAt: new Date().toLocaleDateString(),
     };
+
     if (editIndex !== null) {
-      const updated = tasks.map((t, i) =>
-        i === editIndex ? { ...t, ...newTask } : t
-      );
-      setTasks(updated);
+      updateTask(editIndex, taskData);
       setEditIndex(null);
     } else {
-      setTasks([...tasks, newTask]);
+      addTask(taskData);
     }
+
     clearForm();
     setShowForm(false);
-  };
-
-  const clearForm = () => {
-    setInput('');
-    setDescription('');
-    setPriority('Medium');
-    setCategory('Personal');
-    setDueDate('');
   };
 
   const editTask = (index) => {
@@ -57,29 +59,20 @@ function Tasks() {
     setInput(task.text);
     setDescription(task.description || '');
     setPriority(task.priority || 'Medium');
-    setCategory(task.category || 'Personal');
+    // Fall back to the default category in case the task's original
+    // category was renamed/deleted in a way that no longer matches.
+    setCategory(
+      categories.some((c) => c.name === task.category) ? task.category : defaultCategory
+    );
     setDueDate(task.dueDate || '');
     setEditIndex(index);
     setShowForm(true);
   };
 
-  const deleteTask = (index) => {
-    setTasks(tasks.filter((_, i) => i !== index));
-  };
-
-  const toggleTask = (index) => {
-    const updated = tasks.map((t, i) =>
-      i === index ? { ...t, done: !t.done } : t
-    );
-    setTasks(updated);
-  };
-
-  const filtered = tasks.filter(task => {
+  const filtered = tasks.filter((task) => {
     const matchSearch = task.text.toLowerCase().includes(search.toLowerCase());
     const matchFilter =
-      filter === 'All' ? true :
-      filter === 'Completed' ? task.done :
-      !task.done;
+      filter === 'All' ? true : filter === 'Completed' ? task.done : !task.done;
     return matchSearch && matchFilter;
   });
 
@@ -88,6 +81,10 @@ function Tasks() {
     if (p === 'Medium') return '#f59e0b';
     return '#10b981';
   };
+
+  // Look up a category's color by name so task badges stay in sync
+  // with whatever color the user picked on the Categories page.
+  const categoryColor = (name) => categories.find((c) => c.name === name)?.color;
 
   return (
     <div className="tasks-page">
@@ -119,7 +116,7 @@ function Tasks() {
               placeholder="Task title *"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && addTask()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSave()}
               autoFocus
             />
             <textarea
@@ -133,19 +130,24 @@ function Tasks() {
                 <option>Medium</option>
                 <option>Low</option>
               </select>
+
+              {/* Category dropdown is now fully dynamic - it reflects
+                  whatever categories exist in the shared Context state. */}
               <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                <option>Work</option>
-                <option>Personal</option>
-                <option>Study</option>
-                <option>Shopping</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.name}>
+                    {cat.icon} {cat.name}
+                  </option>
+                ))}
               </select>
+
               <input
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
               />
             </div>
-            <button className="save-btn" onClick={addTask}>
+            <button className="save-btn" onClick={handleSave}>
               {editIndex !== null ? '✅ Update Task' : '✅ Add Task'}
             </button>
           </div>
@@ -160,12 +162,14 @@ function Tasks() {
             onChange={(e) => setSearch(e.target.value)}
           />
           <div className="filter-btns">
-            {['All', 'Pending', 'Completed'].map(f => (
+            {['All', 'Pending', 'Completed'].map((f) => (
               <button
                 key={f}
                 className={filter === f ? 'active' : ''}
                 onClick={() => setFilter(f)}
-              >{f}</button>
+              >
+                {f}
+              </button>
             ))}
           </div>
         </div>
@@ -178,34 +182,51 @@ function Tasks() {
               <p>No tasks found!</p>
             </div>
           )}
-          {filtered.map((task, i) => (
-            <li key={i} className={task.done ? 'done' : ''}>
-              <input
-                type="checkbox"
-                checked={task.done}
-                onChange={() => toggleTask(tasks.indexOf(task))}
-              />
-              <div className="task-info">
-                <div className="task-title">{task.text}</div>
-                {task.description && (
-                  <div className="task-desc">{task.description}</div>
-                )}
-                <div className="task-meta">
-                  <span className="badge" style={{ background: priorityColor(task.priority) }}>
-                    {task.priority}
-                  </span>
-                  <span className="badge category">{task.category}</span>
-                  {task.dueDate && (
-                    <span className="due">📅 {task.dueDate}</span>
+          {filtered.map((task, i) => {
+            const realIndex = tasks.indexOf(task);
+            return (
+              <li key={realIndex} className={task.done ? 'done' : ''}>
+                <input
+                  type="checkbox"
+                  checked={task.done}
+                  onChange={() => toggleTask(realIndex)}
+                />
+                <div className="task-info">
+                  <div className="task-title">{task.text}</div>
+                  {task.description && (
+                    <div className="task-desc">{task.description}</div>
                   )}
+                  <div className="task-meta">
+                    <span
+                      className="badge"
+                      style={{ background: priorityColor(task.priority) }}
+                    >
+                      {task.priority}
+                    </span>
+                    <span
+                      className="badge category"
+                      style={
+                        categoryColor(task.category)
+                          ? { background: categoryColor(task.category) }
+                          : undefined
+                      }
+                    >
+                      {task.category}
+                    </span>
+                    {task.dueDate && <span className="due">📅 {task.dueDate}</span>}
+                  </div>
                 </div>
-              </div>
-              <div className="task-actions">
-                <button className="edit-btn" onClick={() => editTask(tasks.indexOf(task))}>✏️</button>
-                <button className="del-btn" onClick={() => deleteTask(tasks.indexOf(task))}>🗑️</button>
-              </div>
-            </li>
-          ))}
+                <div className="task-actions">
+                  <button className="edit-btn" onClick={() => editTask(realIndex)}>
+                    ✏️
+                  </button>
+                  <button className="del-btn" onClick={() => deleteTask(realIndex)}>
+                    🗑️
+                  </button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
 
       </div>
