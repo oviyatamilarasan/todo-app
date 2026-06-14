@@ -2,92 +2,131 @@ import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import './Calendar.css';
 
+const MONTH_NAMES = [
+  'January','February','March','April','May','June',
+  'July','August','September','October','November','December',
+];
+const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
 function Calendar() {
   const { tasks } = useApp();
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [current, setCurrent]   = useState(new Date());
+  const [selected, setSelected] = useState(null);
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  const year  = current.getFullYear();
+  const month = current.getMonth();
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
+  const daysInMonth    = new Date(year, month + 1, 0).getDate();
 
-  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const todayStr = (() => {
+    const t = new Date();
+    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  })();
 
-  const prevMonth = () => { setCurrentDate(new Date(year, month - 1, 1)); setSelectedDate(null); };
-  const nextMonth = () => { setCurrentDate(new Date(year, month + 1, 1)); setSelectedDate(null); };
+  const toDateStr = (d) =>
+    `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 
-  const formatDate = (d) => {
-    const m = String(month + 1).padStart(2, '0');
-    const day = String(d).padStart(2, '0');
-    return `${year}-${m}-${day}`;
-  };
+  const tasksOn = (dateStr) => tasks.filter(t => t.dueDate === dateStr);
 
-  const tasksForDate = (dateStr) => tasks.filter(t => t.dueDate === dateStr);
+  /* build grid cells: leading empty slots then day numbers */
+  const cells = [
+    ...Array(firstDayOfWeek).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
 
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const prev = () => { setCurrent(new Date(year, month - 1, 1)); setSelected(null); };
+  const next = () => { setCurrent(new Date(year, month + 1, 1)); setSelected(null); };
 
-  const cells = [];
-  for (let i = 0; i < firstDay; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  const selectedTasks = selected ? tasksOn(selected) : [];
 
   return (
-    <div className="calendar-card">
-      <div className="calendar-header">
-        <button onClick={prevMonth}>◀</button>
-        <h3>{monthNames[month]} {year}</h3>
-        <button onClick={nextMonth}>▶</button>
+    <div className="cal-card">
+
+      {/* ── header ── */}
+      <div className="cal-header">
+        <button className="cal-nav" onClick={prev}>‹</button>
+        <span className="cal-title">{MONTH_NAMES[month]} {year}</span>
+        <button className="cal-nav" onClick={next}>›</button>
       </div>
 
-      <div className="calendar-grid">
-        {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
-          <div className="calendar-dayname" key={d}>{d}</div>
+      {/* ── day-name row ── */}
+      <div className="cal-grid">
+        {DAY_NAMES.map(d => (
+          <div key={d} className="cal-dayname">{d}</div>
         ))}
+
+        {/* ── date cells ── */}
         {cells.map((d, i) => {
-          if (!d) return <div className="calendar-cell empty" key={i}></div>;
-          const dateStr = formatDate(d);
-          const dayTasks = tasksForDate(dateStr);
-          const isToday = dateStr === todayStr;
-          const isSelected = dateStr === selectedDate;
+          if (!d) return <div key={`e-${i}`} className="cal-cell empty" />;
+          const ds = toDateStr(d);
+          const dayTasks  = tasksOn(ds);
+          const isToday   = ds === todayStr;
+          const isSel     = ds === selected;
+          const hasTasks  = dayTasks.length > 0;
+          const hasDone   = dayTasks.some(t => t.done);
+          const hasHigh   = dayTasks.some(t => t.priority === 'High' && !t.done);
+
           return (
             <div
-              key={i}
-              className={`calendar-cell ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${dayTasks.length ? 'has-tasks' : ''}`}
-              onClick={() => setSelectedDate(dateStr)}
+              key={ds}
+              className={[
+                'cal-cell',
+                isToday  ? 'today'    : '',
+                isSel    ? 'selected' : '',
+                hasTasks ? 'has-tasks': '',
+              ].join(' ')}
+              onClick={() => setSelected(isSel ? null : ds)}
             >
-              <span>{d}</span>
-              {dayTasks.length > 0 && <div className="task-dot"></div>}
+              <span className="cal-day-num">{d}</span>
+              {hasTasks && (
+                <span
+                  className="cal-dot"
+                  style={{ background: hasHigh ? '#ef4444' : hasDone ? '#10b981' : '#f59e0b' }}
+                />
+              )}
             </div>
           );
         })}
       </div>
 
-      {selectedDate && (
-        <div className="calendar-tasks">
-          <h4>📅 Tasks on {selectedDate}</h4>
-          {tasksForDate(selectedDate).length === 0 ? (
-            <p className="no-task-text">No tasks due this day 🎉</p>
+      {/* ── task list for selected date ── */}
+      {selected && (
+        <div className="cal-tasks">
+          <div className="cal-tasks-header">
+            <span>📅 {selected}</span>
+            <button className="cal-close" onClick={() => setSelected(null)}>✕</button>
+          </div>
+
+          {selectedTasks.length === 0 ? (
+            <p className="cal-empty">No tasks due — enjoy the day! 🎉</p>
           ) : (
-            <ul>
-              {tasksForDate(selectedDate).map((t, i) => (
+            <ul className="cal-task-list">
+              {selectedTasks.map((t, i) => (
                 <li key={i} className={t.done ? 'done' : ''}>
                   <span
-                    className="dot-priority"
+                    className="cal-priority-dot"
                     style={{
                       background:
-                        t.priority === 'High' ? '#ef4444' :
-                        t.priority === 'Medium' ? '#f59e0b' : '#10b981'
+                        t.priority === 'High'   ? '#ef4444' :
+                        t.priority === 'Medium' ? '#f59e0b' : '#10b981',
                     }}
-                  ></span>
-                  {t.text}
+                  />
+                  <span className="cal-task-text">{t.text}</span>
+                  {t.done && <span className="cal-done-badge">✓</span>}
                 </li>
               ))}
             </ul>
           )}
         </div>
       )}
+
+      {/* ── legend ── */}
+      <div className="cal-legend">
+        <span><i style={{ background: '#ef4444' }} /> High priority pending</span>
+        <span><i style={{ background: '#f59e0b' }} /> Pending</span>
+        <span><i style={{ background: '#10b981' }} /> All done</span>
+      </div>
     </div>
   );
 }

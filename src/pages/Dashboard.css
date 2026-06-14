@@ -1,3 +1,4 @@
+/* ── page background ── */
 .dashboard-page {
   min-height: 100vh;
   position: relative;
@@ -19,9 +20,9 @@
 .dashboard-container {
   position: relative;
   z-index: 1;
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 15px 20px 60px;
+  padding: 90px 20px 60px;
 }
 
 .page-title {
@@ -31,68 +32,214 @@
   margin-bottom: 24px;
 }
 
+/* ── STAT CARDS ── */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.1);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: 16px;
-  padding: 24px 16px;
+  padding: 20px 14px;
   text-align: center;
-  animation: fadeIn 0.5s ease;
+  animation: fadeUp 0.4s ease both;
+  transition: transform 0.2s;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.stat-card:hover { transform: translateY(-3px); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.stat-icon { font-size: 28px; }
+.stat-icon  { font-size: 26px; }
+.stat-number { font-size: 34px; font-weight: 800; color: white; margin: 6px 0 3px; }
+.stat-label  { font-size: 12px; color: rgba(255,255,255,0.65); }
 
-.stat-number {
-  font-size: 36px;
-  font-weight: 700;
-  color: white;
-  margin: 8px 0 4px;
+/* ── OVERALL PROGRESS ── */
+.progress-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 16px;
+  padding: 18px 22px;
+  margin-bottom: 20px;
 }
 
-.stat-label {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255,255,255,0.85);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
-.charts-grid {
+.progress-pct {
+  font-size: 18px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.overall-bar {
+  height: 12px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.overall-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: 20px;
+  transition: width 0.6s ease;
+}
+
+.progress-sub {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ── TWO CHARTS SIDE BY SIDE ── */
+.chart-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.charts-grid .calendar-card {
-  grid-column: span 2;
-}
-
 .chart-card {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.1);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: 16px;
-  padding: 16px;
+  padding: 18px;
+  animation: fadeUp 0.5s ease both;
 }
 
-.chart-card h3 {
+.chart-card.full-width { grid-column: span 2; }
+
+.chart-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.chart-card-header h3 {
   color: white;
-  margin-bottom: 16px;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
 }
 
-@media (max-width: 768px) {
-  .stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .charts-grid { grid-template-columns: 1fr; }
-  .charts-grid .calendar-card { grid-column: span 1; }
+/* ── TOGGLE BUTTONS (Pie ↔ Bar) ── */
+.chart-toggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 3px;
+}
+
+.chart-toggle button {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.55);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.chart-toggle button.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.chart-toggle button:not(.active):hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+/* ── % PILLS below charts ── */
+.status-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.pill.green { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.4); }
+.pill.amber { background: rgba(245,158,11,0.2); color: #f59e0b; border: 1px solid rgba(245,158,11,0.4); }
+
+/* ── CATEGORY BREAKDOWN ── */
+.category-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cat-breakdown-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 46px;
+  align-items: center;
+  gap: 12px;
+}
+
+.cat-breakdown-label {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cat-breakdown-count {
+  color: rgba(255,255,255,0.45);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.cat-breakdown-bar {
+  height: 10px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cat-breakdown-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.cat-breakdown-pct {
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .stat-grid   { grid-template-columns: repeat(2, 1fr); }
+  .chart-row   { grid-template-columns: 1fr; }
+  .chart-card.full-width { grid-column: span 1; }
+  .cat-breakdown-row { grid-template-columns: 110px 1fr 38px; }
 }
